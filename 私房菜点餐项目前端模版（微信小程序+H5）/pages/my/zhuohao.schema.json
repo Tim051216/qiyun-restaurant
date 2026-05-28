@@ -1,0 +1,36 @@
+{
+	"bsonType": "object",
+	"required": ["table_number", "qrcode_image"],
+	"permission": {
+		"read": true,
+		"create": "auth.uid != null",
+		"update": "auth.uid != null",
+		"delete": "auth.uid != null"
+	},
+	"properties": {
+		"_id": {
+			"description": "记录 ID，系统自动生成"
+		},
+		"create_time": {
+			"bsonType": "timestamp",
+			"description": "创建时间",
+			"title": "创建时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			}
+		},
+		"table_number": {
+			"bsonType": "string",
+			"description": "桌号",
+			"title": "桌号",
+			"trim": "both",
+			"minLength": 1,
+			"maxLength": 32
+		},
+		"qrcode_image": {
+			"bsonType": "string",
+			"description": "小程序码图片云存储 URL",
+			"title": "小程序码"
+		}
+	}
+}

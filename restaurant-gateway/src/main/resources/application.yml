@@ -1,0 +1,206 @@
+server:
+  port: 9080
+
+spring:
+  application:
+    name: restaurant-gateway
+  
+  # 配置导入
+  config:
+    import: optional:nacos:restaurant-gateway.yaml
+  
+  # 虚拟线程配置
+  threads:
+    virtual:
+      enabled: true
+  
+  # Nacos配置
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        # namespace: ${NACOS_NAMESPACE:dev}  # 使用public命名空间
+        group: RESTAURANT_GROUP
+      config:
+        enabled: false  # 暂时禁用配置中心
+        # server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+        # file-extension: yaml
+        # namespace: ${NACOS_NAMESPACE:dev}
+        # group: RESTAURANT_GROUP
+    
+    # Gateway路由配置
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      
+      routes:
+        # 订单服务路由
+        - id: order-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                key-resolver: "#{@ipKeyResolver}"
+        
+        # 菜品服务路由
+        - id: dish-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/dish/**
+          filters:
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 200
+                redis-rate-limiter.burstCapacity: 400
+                key-resolver: "#{@ipKeyResolver}"
+        
+        # 菜品统计服务路由（Dish Service）
+        - id: dish-statistics-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/statistics/dish/**
+          filters:
+            - StripPrefix=1
+        
+        # 会员服务路由
+        - id: member-service
+          uri: lb://restaurant-member-service
+          predicates:
+            - Path=/api/member/**
+          filters:
+            - StripPrefix=1
+        
+        # 微信登录路由（Member Service）
+        - id: wechat-service
+          uri: lb://restaurant-member-service
+          predicates:
+            - Path=/api/wechat/**,/wechat/**
+          filters:
+            - StripPrefix=1
+        
+        # 管理服务路由
+        - id: admin-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/admin/**
+          filters:
+            - StripPrefix=1
+        
+        # 统计服务路由（Admin Service）
+        - id: statistics-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/statistics/**
+          filters:
+            - StripPrefix=1
+        
+        # 餐桌服务路由（Admin Service）
+        - id: table-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/table/**
+          filters:
+            - StripPrefix=1
+        
+        # 活动服务路由（Admin Service）
+        - id: activity-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/activity/**
+          filters:
+            - StripPrefix=1
+        
+        # 优惠券服务路由（Admin Service）
+        - id: coupon-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/coupon/**
+          filters:
+            - StripPrefix=1
+        
+        # 秒杀服务路由（Admin Service）
+        - id: flash-sale-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/flash-sale/**
+          filters:
+            - StripPrefix=1
+        
+        # AI 聊天服务路由（Admin Service）
+        - id: ai-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/ai/**,/ai/**
+          filters:
+            - StripPrefix=1
+      
+      # 全局CORS配置
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: false
+            maxAge: 3600
+  
+  # Redis配置（用于限流）
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+
+# Sentinel配置
+spring.cloud.sentinel:
+  transport:
+    dashboard: ${SENTINEL_DASHBOARD:localhost:8858}
+    port: 8719
+  # 暂时禁用Nacos数据源（需要额外依赖）
+  # datasource:
+  #   flow:
+  #     nacos:
+  #       server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+  #       dataId: ${spring.application.name}-flow-rules
+  #       groupId: SENTINEL_GROUP
+  #       rule-type: flow
+
+# Actuator监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+# JWT配置
+jwt:
+  secret: qiyun-restaurant-secret-key-2024
+  expiration: 604800
+
+# 日志配置
+logging:
+  level:
+    org.springframework.cloud.gateway: debug
+    com.qiyun.gateway: debug
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n'

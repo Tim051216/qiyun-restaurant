@@ -1,0 +1,130 @@
+{
+  "dashboard": {
+    "title": "七云菜馆 - JVM 详细监控",
+    "tags": ["jvm", "restaurant"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "堆内存使用",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "jvm_memory_used_bytes{application=~\"restaurant.*\", area=\"heap\"}",
+            "legendFormat": "{{application}} - Used"
+          },
+          {
+            "expr": "jvm_memory_max_bytes{application=~\"restaurant.*\", area=\"heap\"}",
+            "legendFormat": "{{application}} - Max"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "非堆内存使用",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "jvm_memory_used_bytes{application=~\"restaurant.*\", area=\"nonheap\"}",
+            "legendFormat": "{{application}} - Used"
+          },
+          {
+            "expr": "jvm_memory_max_bytes{application=~\"restaurant.*\", area=\"nonheap\"}",
+            "legendFormat": "{{application}} - Max"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "GC 暂停时间",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(jvm_gc_pause_seconds_sum{application=~\"restaurant.*\"}[5m])",
+            "legendFormat": "{{application}} - {{action}} - {{cause}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+      },
+      {
+        "id": 4,
+        "title": "GC 次数",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(jvm_gc_pause_seconds_count{application=~\"restaurant.*\"}[5m])",
+            "legendFormat": "{{application}} - {{action}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+      },
+      {
+        "id": 5,
+        "title": "线程状态",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "jvm_threads_live_threads{application=~\"restaurant.*\"}",
+            "legendFormat": "{{application}} - Live"
+          },
+          {
+            "expr": "jvm_threads_daemon_threads{application=~\"restaurant.*\"}",
+            "legendFormat": "{{application}} - Daemon"
+          },
+          {
+            "expr": "jvm_threads_peak_threads{application=~\"restaurant.*\"}",
+            "legendFormat": "{{application}} - Peak"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+      },
+      {
+        "id": 6,
+        "title": "类加载",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "jvm_classes_loaded_classes{application=~\"restaurant.*\"}",
+            "legendFormat": "{{application}} - Loaded"
+          },
+          {
+            "expr": "jvm_classes_unloaded_classes_total{application=~\"restaurant.*\"}",
+            "legendFormat": "{{application}} - Unloaded"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+      },
+      {
+        "id": 7,
+        "title": "缓冲池使用",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "jvm_buffer_memory_used_bytes{application=~\"restaurant.*\"}",
+            "legendFormat": "{{application}} - {{id}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24}
+      },
+      {
+        "id": 8,
+        "title": "虚拟线程数 (Java 21)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "jvm_threads_virtual_threads{application=~\"restaurant.*\"}",
+            "legendFormat": "{{application}} - Virtual Threads"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24}
+      }
+    ],
+    "refresh": "10s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    }
+  }
+}

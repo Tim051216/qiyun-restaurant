@@ -1,0 +1,150 @@
+{
+  "dashboard": {
+    "title": "七云菜馆 - 业务指标监控",
+    "tags": ["business", "restaurant", "order"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "订单创建总数",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "order_create_total",
+            "legendFormat": "订单创建总数"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "订单支付总数",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "order_paid_total",
+            "legendFormat": "订单支付总数"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "订单取消总数",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "order_cancel_total",
+            "legendFormat": "订单取消总数"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0}
+      },
+      {
+        "id": 4,
+        "title": "订单队列长度",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "order_queue_size",
+            "legendFormat": "队列长度"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0}
+      },
+      {
+        "id": 5,
+        "title": "订单创建速率 (每分钟)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(order_create_total[1m]) * 60",
+            "legendFormat": "订单创建/分钟"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
+      },
+      {
+        "id": 6,
+        "title": "订单支付速率 (每分钟)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(order_paid_total[1m]) * 60",
+            "legendFormat": "订单支付/分钟"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
+      },
+      {
+        "id": 7,
+        "title": "订单处理耗时 (P50, P95, P99)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(order_process_duration_seconds_bucket[5m]))",
+            "legendFormat": "P50"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(order_process_duration_seconds_bucket[5m]))",
+            "legendFormat": "P95"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(order_process_duration_seconds_bucket[5m]))",
+            "legendFormat": "P99"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}
+      },
+      {
+        "id": 8,
+        "title": "订单转化率",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "(order_paid_total / order_create_total) * 100",
+            "legendFormat": "支付转化率 (%)"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12}
+      },
+      {
+        "id": 9,
+        "title": "订单状态分布",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "order_create_total",
+            "legendFormat": "已创建"
+          },
+          {
+            "expr": "order_paid_total",
+            "legendFormat": "已支付"
+          },
+          {
+            "expr": "order_cancel_total",
+            "legendFormat": "已取消"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20}
+      },
+      {
+        "id": 10,
+        "title": "订单处理平均耗时",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(order_process_duration_seconds_sum[5m]) / rate(order_process_duration_seconds_count[5m])",
+            "legendFormat": "平均耗时 (秒)"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20}
+      }
+    ],
+    "refresh": "10s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    }
+  }
+}

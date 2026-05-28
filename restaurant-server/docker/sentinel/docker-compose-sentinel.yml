@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  sentinel-dashboard:
+    image: bladex/sentinel-dashboard:1.8.6
+    container_name: restaurant-sentinel-dashboard
+    ports:
+      - "8858:8858"
+    environment:
+      # JVM参数
+      JAVA_OPTS: "-Xms512m -Xmx512m"
+      # Sentinel Dashboard配置
+      # 登录用户名和密码
+      auth.username: sentinel
+      auth.password: sentinel123
+    restart: unless-stopped
+    networks:
+      - restaurant-network
+
+networks:
+  restaurant-network:
+    external: true
+    name: restaurant-server_restaurant-network

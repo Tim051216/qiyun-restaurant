@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菜品图片下载工具 - 百度图片版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header h1 { color: #333; margin-bottom: 15px; font-size: 28px; }
+        .header p { color: #666; line-height: 1.8; margin-bottom: 10px; }
+        .steps {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+        }
+        .steps h3 { color: #1976D2; margin-bottom: 10px; }
+        .steps ol { margin-left: 20px; }
+        .steps li { margin: 8px 0; color: #555; }
+        .category-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .category-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        .dish-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .dish-item {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            background: #fafafa;
+            transition: all 0.3s;
+        }
+        .dish-item:hover {
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .dish-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .dish-file {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+        .search-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .search-btn:hover {
+            transform: scale(1.05);
+        }
+        .tip {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .tip strong { color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍜 菜品图片下载工具（百度图片版）</h1>
+            <p>
+                这是一个完全免费的解决方案！使用百度图片搜索，手动下载高质量菜品图片。
+            </p>
+            <div class="steps">
+                <h3>📝 使用步骤：</h3>
+                <ol>
+                    <li>点击下方的"搜索图片"按钮，会在新标签页打开百度图片搜索</li>
+                    <li>在搜索结果中找到合适的图片</li>
+                    <li>右键点击图片 → "图片另存为" → 保存到 <code>static/menu/menulist/</code> 目录</li>
+                    <li>文件名必须与下方显示的文件名一致（如 gbyd.jpg）</li>
+                    <li>重复以上步骤完成所有菜品</li>
+                </ol>
+            </div>
+            <div class="tip">
+                <strong>💡 选图建议：</strong>
+                选择清晰、有食欲感、俯拍或45度角的图片。避免带水印的图片。
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-title">川味麻辣风</div>
+            <div class="dish-grid">
+
+                <div class="dish-item">
+                    <div class="dish-name">干煸芸豆</div>
+                    <div class="dish-file">文件名: gbyd.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E5%B9%B2%E7%85%B8%E8%8A%B8%E8%B1%86" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">麻婆豆腐</div>
+                    <div class="dish-file">文件名: mpdf.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E9%BA%BB%E5%A9%86%E8%B1%86%E8%85%90" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">鱼香肉丝</div>
+                    <div class="dish-file">文件名: yxrs.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E9%B1%BC%E9%A6%99%E8%82%89%E4%B8%9D" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">水煮鱼</div>
+                    <div class="dish-file">文件名: szyu.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E6%B0%B4%E7%85%AE%E9%B1%BC" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">辣子鸡</div>
+                    <div class="dish-file">文件名: lzj.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E8%BE%A3%E5%AD%90%E9%B8%A1" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">毛血旺</div>
+                    <div class="dish-file">文件名: mxw.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E6%AF%9B%E8%A1%80%E6%97%BA" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">口水鸡</div>
+                    <div class="dish-file">文件名: ksj.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E5%8F%A3%E6%B0%B4%E9%B8%A1" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">夫妻肺片</div>
+                    <div class="dish-file">文件名: ffpp.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E5%A4%AB%E5%A6%BB%E8%82%BA%E7%89%87" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-title">家常小炒</div>
+            <div class="dish-grid">
+
+                <div class="dish-item">
+                    <div class="dish-name">糖醋里脊</div>
+                    <div class="dish-file">文件名: tclj.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%B3%96%E9%86%8B%E9%87%8C%E8%84%8A" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">京酱肉丝</div>
+                    <div class="dish-file">文件名: jjrs.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E4%BA%AC%E9%85%B1%E8%82%89%E4%B8%9D" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">回锅肉</div>
+                    <div class="dish-file">文件名: hgr.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E5%9B%9E%E9%94%85%E8%82%89" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">宫保鸡丁</div>
+                    <div class="dish-file">文件名: gbjd.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E5%AE%AB%E4%BF%9D%E9%B8%A1%E4%B8%81" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">青椒肉丝</div>
+                    <div class="dish-file">文件名: qjrs.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E9%9D%92%E6%A4%92%E8%82%89%E4%B8%9D" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">木须肉</div>
+                    <div class="dish-file">文件名: mxr.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E6%9C%A8%E9%A1%BB%E8%82%89" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">红烧肉</div>
+                    <div class="dish-file">文件名: hsr.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%BA%A2%E7%83%A7%E8%82%89" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">小炒肉</div>
+                    <div class="dish-file">文件名: xcr.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E5%B0%8F%E7%82%92%E8%82%89" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">蚂蚁上树</div>
+                    <div class="dish-file">文件名: myss.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E8%9A%82%E8%9A%81%E4%B8%8A%E6%A0%91" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-title">时蔬素菜</div>
+            <div class="dish-grid">
+
+                <div class="dish-item">
+                    <div class="dish-name">酸辣土豆丝</div>
+                    <div class="dish-file">文件名: sltds.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E9%85%B8%E8%BE%A3%E5%9C%9F%E8%B1%86%E4%B8%9D" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">西红柿炒鸡蛋</div>
+                    <div class="dish-file">文件名: xhscjd.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E8%A5%BF%E7%BA%A2%E6%9F%BF%E7%82%92%E9%B8%A1%E8%9B%8B" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">红烧茄子</div>
+                    <div class="dish-file">文件名: hsqz.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%BA%A2%E7%83%A7%E8%8C%84%E5%AD%90" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">地三鲜</div>
+                    <div class="dish-file">文件名: dsx.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E5%9C%B0%E4%B8%89%E9%B2%9C" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">清炒时蔬</div>
+                    <div class="dish-file">文件名: qcss.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E6%B8%85%E7%82%92%E6%97%B6%E8%94%AC" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">干煸豆角</div>
+                    <div class="dish-file">文件名: gbdj.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E5%B9%B2%E7%85%B8%E8%B1%86%E8%A7%92" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">手撕包菜</div>
+                    <div class="dish-file">文件名: ssbc.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E6%89%8B%E6%92%95%E5%8C%85%E8%8F%9C" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">蒜蓉西兰花</div>
+                    <div class="dish-file">文件名: srxlh.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E8%92%9C%E8%93%89%E8%A5%BF%E5%85%B0%E8%8A%B1" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">油麦菜</div>
+                    <div class="dish-file">文件名: ymc.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E6%B2%B9%E9%BA%A6%E8%8F%9C" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-title">汤品主食</div>
+            <div class="dish-grid">
+
+                <div class="dish-item">
+                    <div class="dish-name">米饭</div>
+                    <div class="dish-file">文件名: mf.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%B1%B3%E9%A5%AD" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">馒头</div>
+                    <div class="dish-file">文件名: mt.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E9%A6%92%E5%A4%B4" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">酸辣汤</div>
+                    <div class="dish-file">文件名: slt.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E9%85%B8%E8%BE%A3%E6%B1%A4" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">疙瘩汤</div>
+                    <div class="dish-file">文件名: gdt.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%96%99%E7%98%A9%E6%B1%A4" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">紫菜蛋花汤</div>
+                    <div class="dish-file">文件名: zcdht.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%B4%AB%E8%8F%9C%E8%9B%8B%E8%8A%B1%E6%B1%A4" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">西红柿鸡蛋汤</div>
+                    <div class="dish-file">文件名: xhsjdt.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E8%A5%BF%E7%BA%A2%E6%9F%BF%E9%B8%A1%E8%9B%8B%E6%B1%A4" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">炒饭</div>
+                    <div class="dish-file">文件名: cf.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%82%92%E9%A5%AD" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">炒面</div>
+                    <div class="dish-file">文件名: cm.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%82%92%E9%9D%A2" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">老鸭汤</div>
+                    <div class="dish-file">文件名: lyt.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E8%80%81%E9%B8%AD%E6%B1%A4" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">排骨汤</div>
+                    <div class="dish-file">文件名: pgt.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E6%8E%92%E9%AA%A8%E6%B1%A4" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-title">夜宵烧烤</div>
+            <div class="dish-grid">
+
+                <div class="dish-item">
+                    <div class="dish-name">烤羊肉串</div>
+                    <div class="dish-file">文件名: kyrc.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%83%A4%E7%BE%8A%E8%82%89%E4%B8%B2" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">烤鸡翅</div>
+                    <div class="dish-file">文件名: kjc.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%83%A4%E9%B8%A1%E7%BF%85" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">烤鱿鱼</div>
+                    <div class="dish-file">文件名: kyy.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%83%A4%E9%B1%BF%E9%B1%BC" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">烤韭菜</div>
+                    <div class="dish-file">文件名: kjc2.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%83%A4%E9%9F%AD%E8%8F%9C" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">烤茄子</div>
+                    <div class="dish-file">文件名: kqz.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%83%A4%E8%8C%84%E5%AD%90" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">烤玉米</div>
+                    <div class="dish-file">文件名: kym.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%83%A4%E7%8E%89%E7%B1%B3" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">烤生蚝</div>
+                    <div class="dish-file">文件名: ksh.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%83%A4%E7%94%9F%E8%9A%9D" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">烤牛肉串</div>
+                    <div class="dish-file">文件名: knrc.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%83%A4%E7%89%9B%E8%82%89%E4%B8%B2" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">烤鸡心</div>
+                    <div class="dish-file">文件名: kjx.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%83%A4%E9%B8%A1%E5%BF%83" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">烤金针菇</div>
+                    <div class="dish-file">文件名: kjzg.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%83%A4%E9%87%91%E9%92%88%E8%8F%87" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">烤土豆片</div>
+                    <div class="dish-file">文件名: ktdp.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%83%A4%E5%9C%9F%E8%B1%86%E7%89%87" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">烤馒头片</div>
+                    <div class="dish-file">文件名: kmtp.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%83%A4%E9%A6%92%E5%A4%B4%E7%89%87" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-title">特色龙虾</div>
+            <div class="dish-grid">
+
+                <div class="dish-item">
+                    <div class="dish-name">麻辣小龙虾</div>
+                    <div class="dish-file">文件名: mlxlx.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E9%BA%BB%E8%BE%A3%E5%B0%8F%E9%BE%99%E8%99%BE" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">蒜蓉小龙虾</div>
+                    <div class="dish-file">文件名: srxlx.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E8%92%9C%E8%93%89%E5%B0%8F%E9%BE%99%E8%99%BE" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">十三香龙虾</div>
+                    <div class="dish-file">文件名: ssxlx.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E5%8D%81%E4%B8%89%E9%A6%99%E9%BE%99%E8%99%BE" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">油焖大虾</div>
+                    <div class="dish-file">文件名: ymdx.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E6%B2%B9%E7%84%96%E5%A4%A7%E8%99%BE" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">清蒸龙虾</div>
+                    <div class="dish-file">文件名: qzlx.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E6%B8%85%E8%92%B8%E9%BE%99%E8%99%BE" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">芝士焗龙虾</div>
+                    <div class="dish-file">文件名: zsjlx.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E8%8A%9D%E5%A3%AB%E7%84%97%E9%BE%99%E8%99%BE" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">冰镇小龙虾</div>
+                    <div class="dish-file">文件名: bzxlx.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E5%86%B0%E9%95%87%E5%B0%8F%E9%BE%99%E8%99%BE" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">椒盐龙虾</div>
+                    <div class="dish-file">文件名: jylx.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E6%A4%92%E7%9B%90%E9%BE%99%E8%99%BE" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">避风塘龙虾</div>
+                    <div class="dish-file">文件名: bftlx.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E9%81%BF%E9%A3%8E%E5%A1%98%E9%BE%99%E8%99%BE" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-title">饮品酒水</div>
+            <div class="dish-grid">
+
+                <div class="dish-item">
+                    <div class="dish-name">可口可乐</div>
+                    <div class="dish-file">文件名: kkl.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E5%8F%AF%E5%8F%A3%E5%8F%AF%E4%B9%90" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">雪碧</div>
+                    <div class="dish-file">文件名: xb.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E9%9B%AA%E7%A2%A7" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">橙汁</div>
+                    <div class="dish-file">文件名: cz.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E6%A9%99%E6%B1%81" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">西瓜汁</div>
+                    <div class="dish-file">文件名: xgz.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E8%A5%BF%E7%93%9C%E6%B1%81" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">柠檬水</div>
+                    <div class="dish-file">文件名: nms.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E6%9F%A0%E6%AA%AC%E6%B0%B4" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">酸梅汤</div>
+                    <div class="dish-file">文件名: smt.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E9%85%B8%E6%A2%85%E6%B1%A4" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">奶茶</div>
+                    <div class="dish-file">文件名: nc.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E5%A5%B6%E8%8C%B6" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">豆浆</div>
+                    <div class="dish-file">文件名: dj.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E8%B1%86%E6%B5%86" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">啤酒</div>
+                    <div class="dish-file">文件名: pj.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E5%95%A4%E9%85%92" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">红酒</div>
+                    <div class="dish-file">文件名: hj.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%BA%A2%E9%85%92" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">白酒</div>
+                    <div class="dish-file">文件名: bj.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%99%BD%E9%85%92" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+                <div class="dish-item">
+                    <div class="dish-name">矿泉水</div>
+                    <div class="dish-file">文件名: kqs.jpg</div>
+                    <a href="https://image.baidu.com/search/index?tn=baiduimage&word=%E7%9F%BF%E6%B3%89%E6%B0%B4" target="_blank" class="search-btn">
+                        🔍 搜索图片
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

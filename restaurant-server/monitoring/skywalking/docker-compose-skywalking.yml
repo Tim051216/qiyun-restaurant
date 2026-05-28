@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # Elasticsearch（SkyWalking存储）
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    container_name: skywalking-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - skywalking-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # SkyWalking OAP Server
+  skywalking-oap:
+    image: apache/skywalking-oap-server:9.6.0
+    container_name: skywalking-oap
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      SW_STORAGE: elasticsearch
+      SW_STORAGE_ES_CLUSTER_NODES: elasticsearch:9200
+      SW_HEALTH_CHECKER: default
+      SW_TELEMETRY: prometheus
+      SW_CORE_GRPC_PORT: 11800
+      SW_CORE_REST_PORT: 12800
+      JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "11800:11800"  # gRPC端口（Agent连接）
+      - "12800:12800"  # HTTP端口（UI连接）
+    networks:
+      - skywalking-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:12800/internal/l7check || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # SkyWalking UI
+  skywalking-ui:
+    image: apache/skywalking-ui:9.6.0
+    container_name: skywalking-ui
+    depends_on:
+      skywalking-oap:
+        condition: service_healthy
+    environment:
+      SW_OAP_ADDRESS: http://skywalking-oap:12800
+      SW_ZIPKIN_ADDRESS: http://skywalking-oap:9412
+    ports:
+      - "8090:8080"
+    networks:
+      - skywalking-network
+    restart: unless-stopped
+
+volumes:
+  elasticsearch-data:
+    driver: local
+
+networks:
+  skywalking-network:
+    driver: bridge

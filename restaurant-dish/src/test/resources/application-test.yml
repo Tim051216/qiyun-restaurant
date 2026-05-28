@@ -1,0 +1,61 @@
+# 测试环境配置
+
+spring:
+  application:
+    name: restaurant-dish-service-test
+  
+  # 数据源配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/restaurant_test?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: test
+    password: test
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+  
+  # Redis配置
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+  
+  # MyBatis Plus配置
+  mybatis-plus:
+    configuration:
+      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    global-config:
+      db-config:
+        id-type: auto
+        logic-delete-field: deleted
+        logic-delete-value: 1
+        logic-not-delete-value: 0
+
+# Caffeine缓存配置
+caffeine:
+  cache:
+    dish:
+      maximum-size: 1000
+      expire-after-write: 5m
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.qiyun: DEBUG
+    org.springframework: WARN
+    com.baomidou.mybatisplus: DEBUG
+
+# 测试专用配置
+test:
+  mock:
+    enabled: true
+  data:
+    cleanup: true

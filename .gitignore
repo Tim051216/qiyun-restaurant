@@ -1,0 +1,174 @@
+# 七云菜馆项目 - Git 忽略文件配置
+
+# ==================== Maven ====================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ==================== Node.js ====================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# 构建输出
+dist/
+dist-ssr/
+*.local
+
+# ==================== IDE ====================
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# ==================== 操作系统 ====================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ==================== 日志文件 ====================
+logs/
+*.log
+log/
+*.out.log
+*.err.log
+*-start.log
+mini-h5-live.log
+
+# ==================== 临时文件 ====================
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~.nib
+
+# ==================== 配置文件（敏感信息）====================
+# 本地配置
+application-local.yml
+application-local.yaml
+application-local.properties
+
+# 生产配置
+application-prod.yml
+application-prod.yaml
+application-prod.properties
+
+# 数据库配置
+*-local.yml
+*-prod.yml
+
+# ==================== 数据库 ====================
+*.db
+*.sqlite
+*.sqlite3
+
+# ==================== 编译文件 ====================
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# ==================== 测试覆盖率 ====================
+.jacoco/
+jacoco.exec
+coverage/
+
+# ==================== Docker ====================
+# 忽略 Docker 数据卷
+docker-data/
+mysql-data/
+redis-data/
+
+# ==================== 微信小程序 ====================
+# uni-app 编译输出
+unpackage/
+
+# 微信开发者工具
+.wechat_devtools/
+
+# ==================== 其他 ====================
+# 压缩包
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# 证书文件
+*.pem
+*.key
+*.crt
+
+# 环境变量文件
+.env
+.env.local
+.env.*.local
+
+# 备份文件
+backup/
+*.backup
+
+# Codex / local publish temp
+qiyun-restaurant-release/
+qiyun-restaurant-publish/
+seed-dashboard-demo.sql
+start-test.txt
+.playwright-cli/
+.kiro/
+
+# ==================== 项目特定 ====================
+# 性能测试结果
+performance-test/results/
+jmeter.log
+
+# 图片下载临时文件
+私房菜点餐项目前端模版（微信小程序+H5）/downloaded_images/
+私房菜点餐项目前端模版（微信小程序+H5）/*.pyc
+
+# 文档草稿
+*-草稿.md
+*-draft.md

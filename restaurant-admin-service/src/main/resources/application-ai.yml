@@ -1,0 +1,9 @@
+# AI 服务配置
+ai:
+  dashscope:
+    # 阿里云通义千问 API Key（请妥善保管，不要提交到代码仓库）
+    api-key: sk-7daca2a765c440c39ada2566908488eb
+    # API 地址
+    api-url: https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation
+    # 使用的模型
+    model: qwen-turbo

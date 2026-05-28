@@ -1,0 +1,373 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  JAVA_VERSION: '21'
+  MAVEN_OPTS: -Xmx3072m
+
+jobs:
+  # 代码质量检查
+  code-quality:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Run Checkstyle
+        run: mvn checkstyle:check
+        continue-on-error: true
+        
+      - name: Run SpotBugs
+        run: mvn spotbugs:check
+        continue-on-error: true
+
+  # 单元测试
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [restaurant-order, restaurant-dish, restaurant-member, restaurant-admin-service, restaurant-gateway]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Run Unit Tests - ${{ matrix.module }}
+        run: |
+          cd ${{ matrix.module }}
+          mvn test -Dtest=*Test -DexcludeGroups=integration,property
+        
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results-${{ matrix.module }}
+          path: ${{ matrix.module }}/target/surefire-reports/
+
+  # 属性测试
+  property-tests:
+    name: Property-Based Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [restaurant-order, restaurant-dish]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Run Property Tests - ${{ matrix.module }}
+        run: |
+          cd ${{ matrix.module }}
+          mvn test -Dtest=*PropertiesTest
+        
+      - name: Upload Property Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: property-test-results-${{ matrix.module }}
+          path: ${{ matrix.module }}/target/surefire-reports/
+
+  # 集成测试
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root123
+          MYSQL_DATABASE: restaurant_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+          
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+          
+      rabbitmq:
+        image: rabbitmq:3.12-management-alpine
+        env:
+          RABBITMQ_DEFAULT_USER: guest
+          RABBITMQ_DEFAULT_PASS: guest
+        ports:
+          - 5672:5672
+          - 15672:15672
+        options: >-
+          --health-cmd="rabbitmq-diagnostics ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    
+    strategy:
+      matrix:
+        module: [restaurant-order, restaurant-dish]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Wait for services
+        run: |
+          sleep 10
+          
+      - name: Run Integration Tests - ${{ matrix.module }}
+        run: |
+          cd ${{ matrix.module }}
+          mvn test -Dtest=*IntegrationTest
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/restaurant_test
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: root123
+          SPRING_REDIS_HOST: localhost
+          SPRING_REDIS_PORT: 6379
+          SPRING_RABBITMQ_HOST: localhost
+          SPRING_RABBITMQ_PORT: 5672
+        
+      - name: Upload Integration Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-results-${{ matrix.module }}
+          path: ${{ matrix.module }}/target/surefire-reports/
+
+  # 代码覆盖率
+  code-coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    needs: [unit-tests, property-tests]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Run Tests with Coverage
+        run: mvn clean test jacoco:report
+        
+      - name: Check Coverage Threshold
+        run: mvn jacoco:check
+        
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./target/site/jacoco/jacoco.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+        
+      - name: Generate Coverage Report
+        run: mvn jacoco:report-aggregate
+        
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: target/site/jacoco/
+
+  # 构建Docker镜像
+  build-docker-images:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    strategy:
+      matrix:
+        service: 
+          - name: restaurant-order
+            context: ./restaurant-order
+          - name: restaurant-dish
+            context: ./restaurant-dish
+          - name: restaurant-member
+            context: ./restaurant-member
+          - name: restaurant-admin-service
+            context: ./restaurant-admin-service
+          - name: restaurant-gateway
+            context: ./restaurant-gateway
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Build JAR
+        run: |
+          cd ${{ matrix.service.context }}
+          mvn clean package -DskipTests
+          
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+        
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service.name }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+          
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.service.context }}
+          file: ${{ matrix.service.context }}/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          
+      - name: Image digest
+        run: echo ${{ steps.meta.outputs.digest }}
+
+  # 安全扫描
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: [build-docker-images]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    strategy:
+      matrix:
+        service: [restaurant-order, restaurant-dish, restaurant-member, restaurant-admin-service, restaurant-gateway]
+    
+    steps:
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service }}:latest
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # 部署到测试环境
+  deploy-test:
+    name: Deploy to Test Environment
+    runs-on: ubuntu-latest
+    needs: [build-docker-images, security-scan]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    environment:
+      name: test
+      url: https://test.restaurant.example.com
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Deploy to Test
+        run: |
+          echo "Deploying to test environment..."
+          # 这里添加实际的部署脚本
+          # 例如：kubectl apply -f k8s/test/ 或 docker-compose up -d
+          
+      - name: Run Smoke Tests
+        run: |
+          echo "Running smoke tests..."
+          # 添加冒烟测试脚本
+
+  # 部署到生产环境
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build-docker-images, security-scan]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://restaurant.example.com
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Deploy to Production
+        run: |
+          echo "Deploying to production environment..."
+          # 这里添加实际的部署脚本
+          
+      - name: Run Smoke Tests
+        run: |
+          echo "Running smoke tests..."
+          # 添加冒烟测试脚本
+          
+      - name: Notify Deployment
+        run: |
+          echo "Deployment completed successfully!"
+          # 发送部署通知（钉钉、邮件等）
+
+  # 通知
+  notify:
+    name: Notify Results
+    runs-on: ubuntu-latest
+    needs: [code-quality, unit-tests, property-tests, integration-tests, code-coverage]
+    if: always()
+    steps:
+      - name: Send notification
+        run: |
+          echo "Pipeline completed with status: ${{ job.status }}"
+          # 这里可以添加钉钉、Slack等通知

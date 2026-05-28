@@ -1,0 +1,86 @@
+{
+  "dashboard": {
+    "title": "七云菜馆 - Spring Boot 监控",
+    "tags": ["spring-boot", "restaurant"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "JVM 内存使用",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "jvm_memory_used_bytes{application=~\"restaurant.*\"}",
+            "legendFormat": "{{application}} - {{area}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "JVM GC 次数",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(jvm_gc_pause_seconds_count{application=~\"restaurant.*\"}[5m])",
+            "legendFormat": "{{application}} - {{action}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "HTTP 请求 QPS",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(http_server_requests_seconds_count{application=~\"restaurant.*\"}[1m])",
+            "legendFormat": "{{application}} - {{uri}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+      },
+      {
+        "id": 4,
+        "title": "HTTP 请求响应时间 (P95)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_server_requests_seconds_bucket{application=~\"restaurant.*\"}[5m]))",
+            "legendFormat": "{{application}} - {{uri}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+      },
+      {
+        "id": 5,
+        "title": "线程数",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "jvm_threads_live_threads{application=~\"restaurant.*\"}",
+            "legendFormat": "{{application}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+      },
+      {
+        "id": 6,
+        "title": "CPU 使用率",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "system_cpu_usage{application=~\"restaurant.*\"}",
+            "legendFormat": "{{application}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+      }
+    ],
+    "refresh": "10s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    }
+  }
+}

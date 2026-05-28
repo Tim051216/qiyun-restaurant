@@ -1,0 +1,11 @@
+{
+  "name": "ai-chat",
+  "version": "1.0.0",
+  "description": "AI 聊天云函数",
+  "main": "index.js",
+  "dependencies": {},
+  "cloudfunction-config": {
+    "memorySize": 256,
+    "timeout": 10
+  }
+}

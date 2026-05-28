@@ -1,0 +1,180 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: restaurant-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - restaurant-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: restaurant-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - restaurant-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  nacos:
+    image: nacos/nacos-server:v2.3.0-slim
+    container_name: restaurant-nacos
+    environment:
+      MODE: standalone
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    networks:
+      - restaurant-network
+    volumes:
+      - nacos-data:/home/nacos/data
+
+  sentinel-dashboard:
+    image: bladex/sentinel-dashboard:1.8.6
+    container_name: restaurant-sentinel-dashboard
+    ports:
+      - "8858:8858"
+    environment:
+      JAVA_OPTS: "-Xms512m -Xmx512m"
+      auth.username: sentinel
+      auth.password: sentinel123
+    networks:
+      - restaurant-network
+    restart: unless-stopped
+
+  seata-server:
+    image: seataio/seata-server:1.7.0
+    container_name: restaurant-seata-server
+    ports:
+      - "8091:8091"
+    environment:
+      SEATA_PORT: 8091
+      STORE_MODE: file
+    networks:
+      - restaurant-network
+    restart: unless-stopped
+
+  skywalking-elasticsearch:
+    image: elasticsearch:8.11.0
+    container_name: restaurant-skywalking-elasticsearch
+    environment:
+      discovery.type: single-node
+      bootstrap.memory_lock: "true"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      xpack.security.enabled: "false"
+    ports:
+      - "9200:9200"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - skywalking-es-data:/usr/share/elasticsearch/data
+    networks:
+      - restaurant-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  skywalking-oap:
+    image: apache/skywalking-oap-server:9.6.0
+    container_name: restaurant-skywalking-oap
+    depends_on:
+      skywalking-elasticsearch:
+        condition: service_healthy
+    environment:
+      SW_STORAGE: elasticsearch
+      SW_STORAGE_ES_CLUSTER_NODES: skywalking-elasticsearch:9200
+      SW_HEALTH_CHECKER: default
+      SW_TELEMETRY: prometheus
+      SW_CORE_GRPC_PORT: 11800
+      SW_CORE_REST_PORT: 12800
+      JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "11800:11800"
+      - "12800:12800"
+    networks:
+      - restaurant-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:12800/internal/l7check || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  skywalking-ui:
+    image: apache/skywalking-ui:9.6.0
+    container_name: restaurant-skywalking-ui
+    depends_on:
+      skywalking-oap:
+        condition: service_healthy
+    environment:
+      SW_OAP_ADDRESS: http://skywalking-oap:12800
+      SW_ZIPKIN_ADDRESS: http://skywalking-oap:9412
+    ports:
+      - "8090:8080"
+    networks:
+      - restaurant-network
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: restaurant-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    networks:
+      - restaurant-network
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: restaurant-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - restaurant-network
+    depends_on:
+      - prometheus
+
+volumes:
+  redis-data:
+  nacos-data:
+  rabbitmq-data:
+  prometheus-data:
+  grafana-data:
+  skywalking-es-data:
+
+networks:
+  restaurant-network:
+    driver: bridge
