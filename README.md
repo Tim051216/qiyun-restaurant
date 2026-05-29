@@ -59,6 +59,47 @@ F:\HBuilderProjects
 └── 私房菜点餐项目前端模版（微信小程序+H5）    # uni-app 小程序与 H5 客户端
 ```
 
+## 系统架构图
+
+```mermaid
+flowchart LR
+    U["用户端"] --> M["微信小程序 / H5"]
+    A["商家端"] --> B["Vue 3 管理后台"]
+
+    M --> G["Spring Cloud Gateway"]
+    B --> G
+
+    G --> AS["restaurant-admin-service"]
+    G --> OS["restaurant-order"]
+    G --> DS["restaurant-dish"]
+    G --> MS["restaurant-member"]
+
+    AS --> MYSQL["MySQL"]
+    OS --> MYSQL
+    DS --> MYSQL
+    MS --> MYSQL
+
+    AS --> REDIS["Redis"]
+    OS --> REDIS
+    DS --> REDIS
+    MS --> REDIS
+
+    OS --> MQ["RabbitMQ"]
+    AS --> NACOS["Nacos"]
+    OS --> NACOS
+    DS --> NACOS
+    MS --> NACOS
+    G --> NACOS
+
+    AS --> AI["通义千问 / AI 能力"]
+
+    G --> OBS["Prometheus + Grafana"]
+    AS --> TRACE["SkyWalking"]
+    OS --> TRACE
+    DS --> TRACE
+    MS --> TRACE
+```
+
 ## 业务能力
 
 ### 用户端
