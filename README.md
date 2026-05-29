@@ -48,15 +48,16 @@
 ## 项目结构
 
 ```text
-F:\HBuilderProjects
-├── restaurant-gateway                     # API 网关
+qiyun-restaurant
+├── restaurant-gateway                     # API Gateway
 ├── restaurant-order                       # 订单服务
 ├── restaurant-dish                        # 菜品服务
 ├── restaurant-member                      # 会员服务
-├── restaurant-admin-service               # 管理端后端服务
+├── restaurant-admin-service               # 管理后台后端
 ├── restaurant-admin                       # 商家管理后台前端
 ├── restaurant-server                      # Docker / 中间件 / 监控部署配置
-└── 私房菜点餐项目前端模版（微信小程序+H5）    # uni-app 小程序与 H5 客户端
+├── 私房菜点餐项目前端模版（微信小程序+H5）    # uni-app 小程序 / H5 客户端
+└── docs                                   # 项目文档与展示资源
 ```
 
 ## 系统架构图
@@ -170,6 +171,10 @@ flowchart LR
 - Redis / RabbitMQ / Sentinel 等中间件落地经验
 - 缓存优化、高并发控制与最终一致性方案
 - 管理后台 + 小程序 + 监控体系的完整交付能力
+
+## 仓库说明
+
+当前仓库已经按“项目主体优先”的方式整理，根目录仅保留核心服务、前端工程与文档资源，便于在 GitHub 上快速理解整体结构与技术侧重点。
 
 ## License
 
